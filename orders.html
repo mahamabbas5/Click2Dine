@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Click2Dine - My Orders</title>
+    <link rel="stylesheet" href="order.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="orders-page">
+     <nav class="navbar">
+      <div class="logo">
+        <img class="logo-icon" src="x.jpg" alt="logo" />
+        <!-- <div class="logo"> <img class="logo-icon" src="Logo.png" alt="logo" /> -->
+        <span style="color: #bfa76a; font-weight: 700; margin-left: 8px"
+          >Click2</span
+        >
+        <span style="color: #fff; font-weight: 400; margin-left: 6px"
+          >Dine</span
+        >
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <a href="index.html" class="nav-link" data-page="home">Home</a>
+          </li>
+          <li><a href="restaurants.html" class="nav-link">Restaurants</a></li>
+          <li>
+            <a href="orders.html" class="nav-link active" data-page="orders">My Orders</a>
+          </li>
+          <li>
+            <a href="aboutus.html" class="nav-link" data-page="aboutus">About Us</a>
+          </li>
+          <li><a href="cart.html" class="nav-link" data-page="cart">Cart</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button class="nav-btn" id="open-signup">Sign Up</button>
+        <button class="nav-btn" id="open-login">Login</button>
+      </div>
+    </nav>
+
+    <!-- ======== HERO ======== -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-title">Track Your Orders</div>
+        <div class="hero-desc">
+          View your recent orders, check delivery status, and reorder your
+          favorite dishes effortlessly.
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== ORDERS SECTION ======== -->
+    <section class="orders-section">
+      <div class="orders-wrap">
+        <h2>Place a New Order</h2>
+        <p class="orders-sub">
+          Fill out the form below to order your favorite meal.
+        </p>
+
+        <!-- ======== ORDER FORM ======== -->
+        <form id="order-form" class="order-form">
+          <label
+            >Restaurant
+            <select id="form-restaurant" required>
+              <option>La Tavola Italiana</option>
+              <option>Golden Bistro</option>
+              <option>Urban Grill House</option>
+            </select>
+          </label>
+          <label
+            >Items (comma-separated)
+            <textarea
+              id="form-items"
+              required
+              placeholder="e.g. Margherita Pizza x1, Tiramisu x2"
+            ></textarea>
+          </label>
+          <label
+            >Total (Rs.)
+            <input id="form-total" type="number" required min="1" />
+          </label>
+          <label
+            >Your name
+            <input id="form-name" type="text" />
+          </label>
+          <label
+            >Delivery address
+            <textarea id="form-address"></textarea>
+          </label>
+          <label
+            >Phone
+            <input id="form-phone" type="tel" />
+          </label>
+          <div class="form-buttons">
+            <button type="submit" class="reorder-btn">Submit Order</button>
+            <button
+              type="button"
+              id="cancel-order"
+              class="reorder-btn cancel-btn"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+
+    <section class="orders-section">
+  <h2>Your Recent Orders</h2>
+  <p class="orders-sub">Track your current order status below.</p>
+
+  <div class="orders-grid">
+    <!-- Single Dynamic Order -->
+    <article class="order-card">
+      <div class="order-head">
+        <div>
+          <div class="order-id">Order #1024</div>
+          <div class="order-meta">
+            Placed: Oct 10, 2025 • La Tavola Italiana
+          </div>
+        </div>
+        <div class="order-status status-processing">Processing</div>
+      </div>
+      <ul class="order-items">
+        <li>Margherita Pizza x1</li>
+        <li>Pasta Alfredo x1</li>
+        <li>Tiramisu x2</li>
+      </ul>
+      <div class="order-foot">
+        <div class="order-total">Total: Rs. 3050</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======== SCRIPT ======== -->
+<script>
+  // Select the order status element
+  const statusEl = document.querySelector(".order-status");
+
+  // Define order statuses and their class names
+  const statuses = [
+    { text: "Processing", class: "status-processing" },
+    { text: "Preparing", class: "status-preparing" },
+    { text: "Ready", class: "status-ready" },
+    { text: "Completed", class: "status-completed" },
+  ];
+
+  let index = 0;
+
+  // Function to update status
+  function updateStatus() {
+    const next = statuses[index];
+    statusEl.textContent = next.text;
+    statusEl.className = "order-status " + next.class;
+    index = (index + 1) % statuses.length; // Loop through
+  }
+
+  // Automatically update status every 4 seconds
+  setInterval(updateStatus, 4000);
+</script>
+
+<!-- ------------------------------ NEW FOOTER ------------------------------ -->
+<section>
+<footer>
+      <div class="footer-grid">
+
+        <div>
+          <h3>Click2Dine</h3>
+          <p>Pakistan’s most advanced digital restaurant menu system.</p>
+        </div>
+
+        <div>
+          <h3>Quick Links</h3>
+          <a href="#">Home</a>
+          <a href="restaurants.html">Restaurants</a>
+          <a href="aboutus.html">About Us</a>
+          <a href="cart.html">Cart</a>
+        </div>
+
+        <div>
+          <h3>Contact</h3>
+          <a>Email: support@click2dine.com</a>
+          <a>Phone: +92 300 0000000</a>
+          <a>Location: Islamabad, Pakistan</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        © 2025 Click2Dine — All Rights Reserved.
+      </div>
+    </footer>
+</section>   
+
+  </body>
+</html>

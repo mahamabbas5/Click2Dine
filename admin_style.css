@@ -1,0 +1,143 @@
+/* === General Styles === */
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #fffaf4;
+  margin: 0;
+  padding: 0;
+  color: #232323;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #bfa76a;
+  padding: 15px 30px;
+  color: white;
+}
+
+header .logo {
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+header nav button {
+  background-color: #fff;
+  color: #232323;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+header nav button:hover {
+  background-color: #e6d8a3;
+}
+
+main {
+  text-align: center;
+  margin-top: 80px;
+}
+
+main h1 {
+  font-size: 2em;
+  color: #bfa76a;
+}
+
+main p {
+  font-size: 1.2em;
+  color: #555;
+}
+
+/* === Modal Styling === */
+#signup-modal,
+#login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  color: #232323;
+  border-radius: 16px;
+  padding: 32px 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  position: relative;
+  animation: fadeIn 0.25s ease-in;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #bfa76a;
+  text-align: center;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.modal-content input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.modal-content button[type="submit"] {
+  background: #bfa76a;
+  color: #232323;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-content button[type="submit"]:hover {
+  background: #d8c480;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #bfa76a;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
