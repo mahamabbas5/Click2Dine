@@ -122,6 +122,24 @@ body.cart-page {
   align-items: center;
 }
 
+.qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 10px;
+}
+
+.qty-btn {
+  background: #bfa76a;
+  color: black;
+  border: none;
+  padding: 3px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+
 /* Summary Box */
 .cart-summary {
   background: #141414;
@@ -276,6 +294,16 @@ footer a:hover {
 
 .checkout-panel.open {
   right: 0;
+}
+
+.checkout-panel {
+  overflow-y: auto !important;
+}
+
+.checkout-content {
+  max-height: 90vh; 
+  overflow-y: scroll !important;
+  padding-right: 10px;
 }
 
 /* Title */
