@@ -145,18 +145,18 @@
       © 2025 Click2Dine — All Rights Reserved.
     </div>
   </footer>
-   <script>
-        document.addEventListener("DOMContentLoaded", function () {
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-        const orderButtons = document.querySelectorAll(".menu-item button");
+      const orderButtons = document.querySelectorAll(".menu-item button");
 
-        orderButtons.forEach(btn => {
+      orderButtons.forEach(btn => {
         btn.addEventListener("click", function () {
 
           const card = this.parentElement;
 
           const itemName = card.querySelector("h4").textContent;
-          const itemPrice = parseInt(card.querySelector("p").textContent.replace("Rs. ", ""));
+          const itemPrice = Number(card.querySelector("p").textContent.replace("Rs. ", ""));
           const itemImage = card.querySelector("img") ? card.querySelector("img").src : "";
           const restaurantName = document.querySelector("h1").textContent;
 
@@ -164,11 +164,11 @@
 
           if (cart[itemName]) {
             cart[itemName].quantity += 1;
-            cart[itemName].totalPrice = cart[itemName].quantity * cart[itemName].price;
+            cart[itemName].totalPrice = cart[itemName].quantity * cart[itemName].unitPrice;
           } else {
             cart[itemName] = {
               name: itemName,
-              price: itemPrice,
+              unitPrice: itemPrice,
               quantity: 1,
               totalPrice: itemPrice,
               image: itemImage,
@@ -182,6 +182,7 @@
         });
       });
     });
-    </script>
+  </script>
+
 </body>
 </html>

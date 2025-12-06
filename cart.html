@@ -9,8 +9,8 @@
       .quantity-controls {
         display: inline-flex;
         align-items: center;
-        margin-left: 15px; /* Added spacing */
-        min-width: 100px; /* Ensure space for buttons/qty */
+        margin-left: 15px;
+        min-width: 100px;
         justify-content: space-between;
       }
       .quantity-controls button {
@@ -21,7 +21,7 @@
         cursor: pointer;
         font-weight: bold;
         border-radius: 4px;
-        line-height: 1; /* Aligns text better */
+        line-height: 1;
         min-width: 30px;
       }
       .quantity-controls span {
@@ -30,17 +30,16 @@
         min-width: 20px;
         text-align: center;
       }
-      /* Style update for list items to better align content */
       #cart-items li {
         display: flex;
         align-items: center;
-        justify-content: space-between; /* Distribute content */
+        justify-content: space-between;
         margin-bottom: 15px;
         padding-bottom: 5px;
         border-bottom: 1px dashed #eee;
       }
       #cart-items li > span:nth-child(2) {
-        flex-grow: 1; /* Allows the name to take up space */
+        flex-grow: 1;
         padding-left: 15px;
       }
       .cart-img {
@@ -69,7 +68,6 @@
         <ul>
           <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="restaurants.html" class="nav-link">Restaurants</a></li>
-          <li><a href="orders.html" class="nav-link">My Orders</a></li>
           <li><a href="aboutus.html" class="nav-link">About Us</a></li>
           <li><a href="cart.html" class="nav-link active">Cart</a></li>
         </ul>
@@ -149,18 +147,27 @@
     <div id="checkout-panel" class="checkout-panel">
       <div class="checkout-content">
         <span id="close-panel" class="close-btn">&times;</span>
+
         <h2>Checkout</h2>
 
         <div class="checkout-section">
           <h3>Delivery Information</h3>
-          <label>Name</label><input type="text" />
-          <label>Phone</label><input type="text" />
-          <label>Address</label><input type="text" />
+
+          <label>Name</label>
+          <input type="text" placeholder="Enter your name" />
+
+          <label>Phone</label>
+          <input type="text" placeholder="03001234567" />
+
+          <label>Address</label>
+          <input type="text" placeholder="Street, House No., Area" />
         </div>
 
         <div class="checkout-section">
           <h3>Order Summary</h3>
+
           <ul id="checkout-summary"></ul>
+
           <p class="checkout-total">
             Total: Rs <span id="checkout-total">0</span>
           </p>
@@ -177,59 +184,80 @@
       let cart = {};
       let total = 0;
 
-      // Function to calculate and display the total
       function updateCartTotal() {
         total = 0;
         for (let name in cart) {
+          cart[name].totalPrice = cart[name].quantity * cart[name].unitPrice;
           total += cart[name].totalPrice;
         }
         totalEl.textContent = total;
       }
 
-      // Function to save the cart to sessionStorage
       function saveCart() {
-        // Create a copy of the cart, excluding the 'element' property which is not serializable
         const cartToSave = {};
         for (const name in cart) {
-          const { element, ...itemData } = cart[name];
-          cartToSave[name] = itemData;
+          const { element, ...data } = cart[name];
+          cartToSave[name] = data;
         }
         sessionStorage.setItem("cart", JSON.stringify(cartToSave));
       }
 
-      // Function to handle quantity changes
       function changeQuantity(name, delta) {
-        if (!cart[name]) return;
-
         const item = cart[name];
-        item.quantity = Math.max(0, item.quantity + delta); // Quantity can't go below 0
+        if (!item) return;
+
+        item.quantity = Math.max(0, item.quantity + delta);
+        item.unitPrice = Number(item.unitPrice);
         item.totalPrice = item.quantity * item.unitPrice;
 
         if (item.quantity === 0) {
-          // Remove item if quantity is 0
-          if (item.element) {
-            item.element.remove();
-          }
+          if (item.element) item.element.remove();
           delete cart[name];
         } else {
-          // Update the item's HTML with new quantity and price
           item.element.querySelector(".cart-qty").textContent = item.quantity;
-          item.element.querySelector(".cart-price").textContent =
-            "Rs. " + item.totalPrice;
+          item.element.querySelector(".cart-price").textContent = "Rs. " + item.totalPrice;
         }
 
         updateCartTotal();
         saveCart();
       }
 
-      // Function to create a new list item and attach listeners
+      function populateCheckoutPanel() {
+        const checkoutSummary = document.getElementById("checkout-summary");
+        const checkoutTotal = document.getElementById("checkout-total");
+
+        // Clear previous content
+        checkoutSummary.innerHTML = "";
+
+        // Add each cart item to checkout summary
+        for (let name in cart) {
+          const item = cart[name];
+          const li = document.createElement("li");
+          li.textContent = `${name} x ${item.quantity} = Rs. ${item.totalPrice}`;
+          checkoutSummary.appendChild(li);
+        }
+
+        // Update total
+        checkoutTotal.textContent = total;
+      }
+
+      // Update checkout panel button click
+      document.getElementById("checkout-btn").addEventListener("click", () => {
+        if (total > 0) {
+          populateCheckoutPanel(); // Populate summary and total
+          document.getElementById("checkout-panel").classList.add("open");
+        } else {
+          alert("Your cart is empty!");
+        }
+      });
+
+
       function createCartItemElement(name, item) {
         const li = document.createElement("li");
-        li.setAttribute("data-name", name); // Use data attribute to identify the item
+        li.setAttribute("data-name", name);
         cartItemsContainer.appendChild(li);
         item.element = li;
 
-        // Populate initial HTML
         li.innerHTML = `
           <img src="${item.img}" class="cart-img" />
           <span>${name}</span>
@@ -241,42 +269,39 @@
           <span class="cart-price">Rs. ${item.totalPrice}</span>
         `;
 
-        // Attach event listeners to the buttons for the current item
-        li.querySelector(".decrease-qty").addEventListener("click", () => {
-          changeQuantity(name, -1);
-        });
-        li.querySelector(".increase-qty").addEventListener("click", () => {
-          changeQuantity(name, 1);
-        });
+        li.querySelector(".decrease-qty").addEventListener("click", () => changeQuantity(name, -1));
+        li.querySelector(".increase-qty").addEventListener("click", () => changeQuantity(name, 1));
       }
 
-      // Load saved cart and display it
+      // Load cart from Storage correctly
       if (sessionStorage.getItem("cart")) {
         const savedCart = JSON.parse(sessionStorage.getItem("cart"));
-
-        // Re-construct the cart object, and render the items
         for (let name in savedCart) {
-          cart[name] = { ...savedCart[name], element: null }; // Initialize element as null
+          const item = savedCart[name];
+          cart[name] = {
+            quantity: Number(item.quantity),
+            unitPrice: Number(item.unitPrice),
+            img: item.img,
+            totalPrice: Number(item.quantity) * Number(item.unitPrice),
+            element: null,
+          };
           createCartItemElement(name, cart[name]);
         }
-
         updateCartTotal();
       }
 
-      // Add to cart event listeners (for the Add-Ons buttons)
+      // Add button logic
       document.querySelectorAll(".add-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const name = btn.dataset.name;
-          const price = parseInt(btn.dataset.price);
+          const price = Number(btn.dataset.price);
           const img = btn.parentElement.querySelector("img").src;
 
           if (cart[name]) {
-            // Item exists, just increase quantity
             changeQuantity(name, 1);
           } else {
-            // New item, add to cart object and create element
             cart[name] = {
-              quantity: 1, // Start at 1
+              quantity: 1,
               unitPrice: price,
               totalPrice: price,
               img: img,
@@ -289,7 +314,6 @@
         });
       });
 
-      // CLEAR CART
       document.getElementById("clear-cart").addEventListener("click", () => {
         sessionStorage.removeItem("cart");
         cartItemsContainer.innerHTML = "";
@@ -298,16 +322,21 @@
         total = 0;
       });
 
-      // CHECKOUT BUTTON
-      document.getElementById("checkout-btn").addEventListener("click", () => {
-        if (total > 0) {
-          alert(
-            `Proceeding to checkout with a total of Rs. ${total}. (The cart will persist until you click 'Clear Cart' or implement cart clearing on successful order placement.)`
-          );
-        } else {
-          alert("Your cart is empty!");
-        }
-      });
+      
+      // Show checkout panel
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+      if (total > 0) {
+        document.getElementById("checkout-panel").classList.add("open");
+      } else {
+        alert("Your cart is empty!");
+      }
+    });
+
+    // Close checkout panel
+    document.getElementById("close-panel").addEventListener("click", () => {
+      document.getElementById("checkout-panel").classList.remove("open");
+    });
+
     </script>
-  </body>
+</body>
 </html>
