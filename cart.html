@@ -5,6 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Click2Dine - Your Cart</title>
     <link rel="stylesheet" href="cart.css" />
+    <style>
+      .quantity-controls {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 15px; /* Added spacing */
+        min-width: 100px; /* Ensure space for buttons/qty */
+        justify-content: space-between;
+      }
+      .quantity-controls button {
+        background: #bfa76a;
+        color: #fff;
+        border: none;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 4px;
+        line-height: 1; /* Aligns text better */
+        min-width: 30px;
+      }
+      .quantity-controls span {
+        margin: 0 10px;
+        font-weight: 700;
+        min-width: 20px;
+        text-align: center;
+      }
+      /* Style update for list items to better align content */
+      #cart-items li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Distribute content */
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 1px dashed #eee;
+      }
+      #cart-items li > span:nth-child(2) {
+        flex-grow: 1; /* Allows the name to take up space */
+        padding-left: 15px;
+      }
+      .cart-img {
+        margin-right: 15px;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+      }
+      .cart-price {
+        min-width: 70px;
+        text-align: right;
+        font-weight: 700;
+      }
+    </style>
   </head>
 
   <body class="cart-page">
@@ -17,9 +67,7 @@
 
       <nav>
         <ul>
-          <li>
-            <a href="index.html" class="nav-link" data-page="home">Home</a>
-          </li>
+          <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="restaurants.html" class="nav-link">Restaurants</a></li>
           <li><a href="orders.html" class="nav-link">My Orders</a></li>
           <li><a href="aboutus.html" class="nav-link">About Us</a></li>
@@ -35,20 +83,27 @@
 
     <section class="menu-section">
       <div class="orders-section" style="max-width: 1100px; margin: 40px auto">
-        <!-- Cart Display -->
         <div class="restaurant-card">
-          <h2>🛍️ Your Cart</h2>
+          <h2>🛍 Your Cart</h2>
           <ul id="cart-items"></ul>
 
           <div class="cart-summary">
             <p><strong>Total:</strong> Rs. <span id="cart-total">0</span></p>
+
             <button id="checkout-btn" class="reorder-btn">
               Proceed to Checkout
+            </button>
+
+            <button
+              id="clear-cart"
+              class="reorder-btn"
+              style="background: red; margin-top: 10px"
+            >
+              Clear Cart
             </button>
           </div>
         </div>
 
-        <!-- ADD-ONS -->
         <h2 style="margin-top: 28px; color: #bfa76a">Add-Ons</h2>
 
         <div class="menu-grid">
@@ -91,57 +146,21 @@
       </div>
     </section>
 
-    <footer>
-      <div class="footer-grid">
-        <div>
-          <h3>Click2Dine</h3>
-          <p>Pakistan’s most advanced digital restaurant menu system.</p>
-        </div>
-
-        <div>
-          <h3>Quick Links</h3>
-          <a href="#">Home</a>
-          <a href="restaurants.html">Restaurants</a>
-          <a href="aboutus.html">About Us</a>
-          <a href="cart.html">Cart</a>
-        </div>
-
-        <div>
-          <h3>Contact</h3>
-          <a>Email: support@click2dine.com</a>
-          <a>Phone: +92 300 0000000</a>
-          <a>Location: Islamabad, Pakistan</a>
-        </div>
-      </div>
-
-      <div class="footer-bottom">© 2025 Click2Dine — All Rights Reserved.</div>
-    </footer>
-
-    <!-- CHECKOUT SLIDING PANEL -->
     <div id="checkout-panel" class="checkout-panel">
       <div class="checkout-content">
         <span id="close-panel" class="close-btn">&times;</span>
-
         <h2>Checkout</h2>
 
         <div class="checkout-section">
           <h3>Delivery Information</h3>
-
-          <label>Name</label>
-          <input type="text" placeholder="Enter your name" />
-
-          <label>Phone</label>
-          <input type="text" placeholder="+92XXXXXXXXXX" />
-
-          <label>Address</label>
-          <input type="text" placeholder="Street, House No., Area" />
+          <label>Name</label><input type="text" />
+          <label>Phone</label><input type="text" />
+          <label>Address</label><input type="text" />
         </div>
 
         <div class="checkout-section">
           <h3>Order Summary</h3>
-
           <ul id="checkout-summary"></ul>
-
           <p class="checkout-total">
             Total: Rs <span id="checkout-total">0</span>
           </p>
@@ -152,109 +171,142 @@
     </div>
 
     <script>
-      const cartItems = document.getElementById("cart-items");
+      const cartItemsContainer = document.getElementById("cart-items");
       const totalEl = document.getElementById("cart-total");
-      const addBtns = document.querySelectorAll(".add-btn");
 
-      // Cart object
       let cart = {};
       let total = 0;
 
-      // Load cart from sessionStorage on page load
-      if (sessionStorage.getItem("cart")) {
-        cart = JSON.parse(sessionStorage.getItem("cart"));
+      // Function to calculate and display the total
+      function updateCartTotal() {
+        total = 0;
         for (let name in cart) {
-          const item = cart[name];
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <img src="${item.img}" class="cart-img">
-            <span>${name}</span>
-            <span class="cart-qty">x${item.quantity}</span>
-            <span class="cart-price">Rs. ${item.totalPrice}</span>
-          `;
-          cartItems.appendChild(li);
-          item.element = li;
-          total += item.totalPrice;
+          total += cart[name].totalPrice;
         }
         totalEl.textContent = total;
       }
 
-      // Save cart to sessionStorage
+      // Function to save the cart to sessionStorage
       function saveCart() {
-        sessionStorage.setItem("cart", JSON.stringify(cart));
+        // Create a copy of the cart, excluding the 'element' property which is not serializable
+        const cartToSave = {};
+        for (const name in cart) {
+          const { element, ...itemData } = cart[name];
+          cartToSave[name] = itemData;
+        }
+        sessionStorage.setItem("cart", JSON.stringify(cartToSave));
       }
 
-      addBtns.forEach((btn) => {
+      // Function to handle quantity changes
+      function changeQuantity(name, delta) {
+        if (!cart[name]) return;
+
+        const item = cart[name];
+        item.quantity = Math.max(0, item.quantity + delta); // Quantity can't go below 0
+        item.totalPrice = item.quantity * item.unitPrice;
+
+        if (item.quantity === 0) {
+          // Remove item if quantity is 0
+          if (item.element) {
+            item.element.remove();
+          }
+          delete cart[name];
+        } else {
+          // Update the item's HTML with new quantity and price
+          item.element.querySelector(".cart-qty").textContent = item.quantity;
+          item.element.querySelector(".cart-price").textContent =
+            "Rs. " + item.totalPrice;
+        }
+
+        updateCartTotal();
+        saveCart();
+      }
+
+      // Function to create a new list item and attach listeners
+      function createCartItemElement(name, item) {
+        const li = document.createElement("li");
+        li.setAttribute("data-name", name); // Use data attribute to identify the item
+        cartItemsContainer.appendChild(li);
+        item.element = li;
+
+        // Populate initial HTML
+        li.innerHTML = `
+          <img src="${item.img}" class="cart-img" />
+          <span>${name}</span>
+          <div class="quantity-controls">
+            <button class="decrease-qty" data-name="${name}">-</button>
+            <span class="cart-qty">${item.quantity}</span>
+            <button class="increase-qty" data-name="${name}">+</button>
+          </div>
+          <span class="cart-price">Rs. ${item.totalPrice}</span>
+        `;
+
+        // Attach event listeners to the buttons for the current item
+        li.querySelector(".decrease-qty").addEventListener("click", () => {
+          changeQuantity(name, -1);
+        });
+        li.querySelector(".increase-qty").addEventListener("click", () => {
+          changeQuantity(name, 1);
+        });
+      }
+
+      // Load saved cart and display it
+      if (sessionStorage.getItem("cart")) {
+        const savedCart = JSON.parse(sessionStorage.getItem("cart"));
+
+        // Re-construct the cart object, and render the items
+        for (let name in savedCart) {
+          cart[name] = { ...savedCart[name], element: null }; // Initialize element as null
+          createCartItemElement(name, cart[name]);
+        }
+
+        updateCartTotal();
+      }
+
+      // Add to cart event listeners (for the Add-Ons buttons)
+      document.querySelectorAll(".add-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const name = btn.dataset.name;
           const price = parseInt(btn.dataset.price);
           const img = btn.parentElement.querySelector("img").src;
 
           if (cart[name]) {
-            cart[name].quantity += 1;
-            cart[name].totalPrice += price;
-
-            const li = cart[name].element;
-            li.querySelector(
-              ".cart-qty"
-            ).textContent = `x${cart[name].quantity}`;
-            li.querySelector(
-              ".cart-price"
-            ).textContent = `Rs. ${cart[name].totalPrice}`;
+            // Item exists, just increase quantity
+            changeQuantity(name, 1);
           } else {
-            const li = document.createElement("li");
-            li.innerHTML = `
-              <img src="${img}" class="cart-img">
-              <span>${name}</span>
-              <span class="cart-qty">x1</span>
-              <span class="cart-price">Rs. ${price}</span>
-            `;
-            cartItems.appendChild(li);
-
+            // New item, add to cart object and create element
             cart[name] = {
-              quantity: 1,
+              quantity: 1, // Start at 1
+              unitPrice: price,
               totalPrice: price,
               img: img,
-              element: li,
+              element: null,
             };
+            createCartItemElement(name, cart[name]);
+            updateCartTotal();
+            saveCart();
           }
-
-          total += price;
-          totalEl.textContent = total;
-
-          saveCart();
         });
       });
 
-      document.getElementById("checkout-btn").addEventListener("click", () => {
-        const panel = document.getElementById("checkout-panel");
-        const summaryList = document.getElementById("checkout-summary");
-        const checkoutTotal = document.getElementById("checkout-total");
-
-        summaryList.innerHTML = "";
-        let sum = 0;
-
-        for (let name in cart) {
-          const item = cart[name];
-
-          sum += item.totalPrice;
-
-          summaryList.innerHTML += `
-      <li>
-        <span>${name} (x${item.quantity})</span>
-        <span>Rs ${item.totalPrice}</span>
-      </li>
-    `;
-        }
-
-        checkoutTotal.textContent = sum;
-
-        panel.classList.add("open");
+      // CLEAR CART
+      document.getElementById("clear-cart").addEventListener("click", () => {
+        sessionStorage.removeItem("cart");
+        cartItemsContainer.innerHTML = "";
+        totalEl.textContent = "0";
+        cart = {};
+        total = 0;
       });
 
-      // Close Panel
-      document.getElementById("close-panel").addEventListener("click", () => {
-        document.getElementById("checkout-panel").classList.remove("open");
+      // CHECKOUT BUTTON
+      document.getElementById("checkout-btn").addEventListener("click", () => {
+        if (total > 0) {
+          alert(
+            `Proceeding to checkout with a total of Rs. ${total}. (The cart will persist until you click 'Clear Cart' or implement cart clearing on successful order placement.)`
+          );
+        } else {
+          alert("Your cart is empty!");
+        }
       });
     </script>
   </body>
