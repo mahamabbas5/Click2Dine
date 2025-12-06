@@ -21,7 +21,6 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="restaurants.html" class="active">Restaurants</a></li>
-        <li><a href="orders.html">My Orders</a></li>
         <li><a href="aboutus.html">About Us</a></li>
          <li><a href="cart.html">Cart</a></li>
       </ul>
@@ -136,5 +135,45 @@
         © 2025 Click2Dine — All Rights Reserved.
       </div>
     </footer>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const orderButtons = document.querySelectorAll(".menu-item button");
+
+    orderButtons.forEach(btn => {
+      btn.addEventListener("click", function () {
+
+        const card = this.parentElement;
+
+        const itemName = card.querySelector("h4").textContent;
+        const itemPrice = parseInt(card.querySelector("p").textContent.replace("Rs. ", ""));
+        const itemImage = card.querySelector("img") ? card.querySelector("img").src : "";
+        const restaurantName = document.querySelector("h1").textContent;
+
+        let cart = JSON.parse(sessionStorage.getItem("cart")) || {};
+
+        if (cart[itemName]) {
+          cart[itemName].quantity += 1;
+          cart[itemName].totalPrice = cart[itemName].quantity * cart[itemName].price;
+        } else {
+          cart[itemName] = {
+            name: itemName,
+            price: itemPrice,
+            quantity: 1,
+            totalPrice: itemPrice,
+            image: itemImage,
+            restaurant: restaurantName
+          };
+        }
+
+        sessionStorage.setItem("cart", JSON.stringify(cart));
+
+        alert("✔ Added to Cart");
+      });
+    });
+
+  });
+    </script>
 </body>
+
 </html>
