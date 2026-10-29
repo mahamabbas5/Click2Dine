@@ -1,5 +1,5 @@
-// API Base URL - Update this to match your XAMPP setup
-const API_BASE_URL = 'http://localhost/click2dine/api';
+// API Base URL - relative, so it works on localhost, EC2 and Elastic Beanstalk
+const API_BASE_URL = 'api';
 
 // ==================== AUTHENTICATION ====================
 

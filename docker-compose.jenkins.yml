@@ -1,0 +1,41 @@
+# Part II - used by the Jenkins pipeline (code mounted as a volume, no Dockerfile)
+services:
+  web:
+    image: php:8.2-apache
+    container_name: click2dine-ci-web
+    command: >
+      bash -c "docker-php-ext-install mysqli pdo pdo_mysql && apache2-foreground"
+    ports:
+      - "8082:80"
+    volumes:
+      - ./:/var/www/html     # code volume instead of Dockerfile COPY
+    environment:
+      DB_HOST: db
+      DB_USER: c2d_user
+      DB_PASSWORD: c2d_pass
+      DB_NAME: click2dine
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: click2dine-ci-db
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: click2dine
+      MYSQL_USER: c2d_user
+      MYSQL_PASSWORD: c2d_pass
+    volumes:
+      - ci_db_data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  ci_db_data:

@@ -21,8 +21,15 @@ try {
     $stmt = $pdo->prepare('INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :hash)');
     $stmt->execute([':name' => $name, ':email' => $email, ':hash' => $hash]);
     jsonResponse(['success' => true, 'user_id' => $pdo->lastInsertId()]);
+} catch (PDOException $e) {
+    if ($e->getCode() == '23000') {
+        sendError('This email is already registered', 409);
+    }
+    error_log($e->getMessage());
+    sendError('Could not create account', 500);
 } catch (Exception $e) {
-    sendError($e->getMessage(), 500);
+    error_log($e->getMessage());
+    sendError('Could not create account', 500);
 }
 
 ?>

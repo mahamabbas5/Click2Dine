@@ -150,7 +150,7 @@
           const card = this.parentElement;
 
           const itemName = card.querySelector("h4").textContent;
-          const itemPrice = Number(card.querySelector("p").textContent.replace("Rs. ", ""));
+          const itemPrice = Number(card.querySelector("p:not(.item-desc)").textContent.replace("Rs. ", "").replace(/,/g, "").trim());
           const itemImage = card.querySelector("img") ? card.querySelector("img").src : "";
           const restaurantName = document.querySelector("h1").textContent;
 
@@ -166,6 +166,7 @@
               quantity: 1,
               totalPrice: itemPrice,
               image: itemImage,
+              img: itemImage,
               restaurant: restaurantName
             };
           }

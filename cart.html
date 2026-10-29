@@ -284,7 +284,7 @@
           cart[name] = {
             quantity: Number(item.quantity),
             unitPrice: Number(item.unitPrice),
-            img: item.img,
+            img: item.img || item.image || "",
             totalPrice: Number(item.quantity) * Number(item.unitPrice),
             element: null,
           };

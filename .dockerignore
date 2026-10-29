@@ -1,0 +1,6 @@
+.git
+.gitignore
+Jenkinsfile
+docker-compose*.yml
+Dockerfile
+api/db_config.php
