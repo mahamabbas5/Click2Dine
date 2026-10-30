@@ -1,3 +1,4 @@
 api/db_config.php
 db/*.sqlite
 .env
+dckr_pat_*

@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    triggers { githubPush() }          // fired by the GitHub webhook
+    triggers { githubPush() }
 
     stages {
         stage('Checkout') {
@@ -29,8 +29,7 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh 'sleep 60'
-                sh 'curl -sf http://localhost:8082/api/health_db.php'
+                sh 'for i in $(seq 1 30); do curl -sf http://localhost:8082/api/health_db.php && exit 0; sleep 5; done; exit 1'
             }
         }
     }
@@ -43,7 +42,7 @@ pipeline {
 Build: #${env.BUILD_NUMBER}
 Result: ${currentBuild.currentResult}
 Details: ${env.BUILD_URL}""",
-                recipientProviders: [developers(), requestor()]   // the person who pushed
+                recipientProviders: [developers(), requestor()]
             )
         }
     }

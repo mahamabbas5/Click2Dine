@@ -1,14 +1,12 @@
-# Part II - used by the Jenkins pipeline (code mounted as a volume, no Dockerfile)
+# Part II - used by the Jenkins pipeline (code mounted as a volume)
 services:
   web:
-    image: php:8.2-apache
+    image: syedamahamzaidi/click2dine:latest
     container_name: click2dine-ci-web
-    command: >
-      bash -c "docker-php-ext-install mysqli pdo pdo_mysql && apache2-foreground"
     ports:
       - "8082:80"
     volumes:
-      - ./:/var/www/html     # code volume instead of Dockerfile COPY
+      - ./:/var/www/html
     environment:
       DB_HOST: db
       DB_USER: c2d_user
