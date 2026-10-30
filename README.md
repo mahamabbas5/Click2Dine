@@ -32,3 +32,5 @@ export DB_HOST=127.0.0.1 DB_NAME=click2dine DB_USER=c2d_app DB_PASSWORD=...
 php api/init_db.php
 php -S 127.0.0.1:8080
 ```
+
+Webhook test
